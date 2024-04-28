@@ -2,6 +2,8 @@
 # ComfyUI-IDM-VTON
 ComfyUI adaptation of [IDM-VTON](https://github.com/yisol/IDM-VTON).
 
+![](assets/progress.gif)
+
 ## Credits
 - [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
 - [IDM-VTON](https://github.com/yisol/IDM-VTON)
