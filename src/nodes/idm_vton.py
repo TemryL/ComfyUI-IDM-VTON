@@ -42,31 +42,30 @@ class IDM_VTON:
     def preprocess_images(self, model_img, garment_img, pose_img, mask_img, width, height):
         transform = transforms.Compose(
             [
-                transforms.ToTensor(),
                 transforms.Normalize([0.5], [0.5]),
             ]
         )
-        to_tensor = transforms.ToTensor()
         clip_processor = CLIPImageProcessor()
         image_embeds = clip_processor(images=garment_img, return_tensors="pt").pixel_values[0].unsqueeze(0)
         
-        model_img = model_img.resize((width, height))
+        # model_img = model_img.resize((width, height))
         model_img = transform(model_img)
-        model_img = (model_img.unsqueeze(0) + 1.0) / 2.0
+        # model_img = (model_img.unsqueeze(0) + 1.0) / 2.0
+        model_img = (model_img + 1.0) / 2.0
         model_img = model_img.to(DEVICE)
         
         garment_img = transform(garment_img)
-        garment_img = garment_img.unsqueeze(0)
+        # garment_img = garment_img.unsqueeze(0)
         garment_img = garment_img.to(DEVICE)
         
         pose_img = transform(pose_img)
-        pose_img = pose_img.unsqueeze(0)
+        # pose_img = pose_img.unsqueeze(0)
         pose_img = pose_img.to(DEVICE)
         
-        mask_img = mask_img.resize((width, height))
-        mask_img = to_tensor(mask_img)
+        # mask_img = mask_img.resize((width, height))
+        # mask_img = to_tensor(mask_img)
         mask_img = mask_img[:1]
-        mask_img = mask_img.unsqueeze(0)
+        # mask_img = mask_img.unsqueeze(0)
         mask_img = mask_img.to(DEVICE)
         
         return model_img, garment_img, pose_img, mask_img, image_embeds
