@@ -1,0 +1,13 @@
+# python==3.10
+torch
+torchvision
+torchaudio
+accelerate
+torchmetrics
+tqdm
+transformers
+diffusers==0.25.0
+einops
+bitsandbytes
+scipy
+opencv-python
