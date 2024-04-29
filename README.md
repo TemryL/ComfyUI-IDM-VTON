@@ -2,7 +2,9 @@
 # ComfyUI-IDM-VTON
 ComfyUI adaptation of [IDM-VTON](https://github.com/yisol/IDM-VTON).
 
-![](assets/progress.gif)
+![workflow](assets/workflow.png)
+
+:warning: Work still in progress :warning:
 
 ## Credits
 - [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
