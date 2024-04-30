@@ -7,7 +7,7 @@ ComfyUI adaptation of [IDM-VTON](https://github.com/yisol/IDM-VTON).
 
 # Installation
 
-### Using ComfyUI Manager:
+### Using [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager):
 
 - Look for ```ComfyUI-IDM-VTON```, and be sure the author is ```TemryL```. Install it.
 
