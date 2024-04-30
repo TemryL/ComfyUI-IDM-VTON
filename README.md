@@ -12,14 +12,12 @@ ComfyUI adaptation of [IDM-VTON](https://github.com/yisol/IDM-VTON).
 - Look for ```ComfyUI-IDM-VTON```, and be sure the author is ```TemryL```. Install it.
 
 ### Manually:
-- Clone this repo into `custom_nodes` folder in ComfyUI and install requirements.
-'''bash
+- Clone this repo into `custom_nodes` folder in ComfyUI and install the dependencies.
+```bash
 cd custom_nodes
-git clone 
-'''
-
-### Define S3 Config
-Create `.env` file in ComfyS3 root folder with the following variables:
+git clone https://github.com/TemryL/ComfyUI-IDM-VTON.git
+pip install -r requirements.txt 
+```
 
 # Credits
 - [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
