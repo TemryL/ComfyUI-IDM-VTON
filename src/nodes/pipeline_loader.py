@@ -9,11 +9,9 @@ from transformers import AutoTokenizer, CLIPImageProcessor, CLIPVisionModelWithP
 from ..idm_vton.unet_hacked_tryon import UNet2DConditionModel
 from ..idm_vton.unet_hacked_garmnet import UNet2DConditionModel as UNet2DConditionModel_ref
 from ..idm_vton.tryon_pipeline import StableDiffusionXLInpaintPipeline as TryonPipeline
-from comfy.model_management import get_torch_device
 
 
 HF_REPO_ID = "yisol/IDM-VTON"   # should be downloaded from HF and stored in models folder instead of HF cache
-DEVICE = get_torch_device()
 
 
 class PipelineLoader:
@@ -36,38 +34,38 @@ class PipelineLoader:
         vae = AutoencoderKL.from_pretrained(
             HF_REPO_ID,
             subfolder="vae",
-            torch_dtype=weight_dtype,
-        ).requires_grad_(False).eval().to(DEVICE)
+            torch_dtype=weight_dtype
+        ).requires_grad_(False).eval()
         
         unet = UNet2DConditionModel.from_pretrained(
             HF_REPO_ID,
             subfolder="unet",
-            torch_dtype=weight_dtype,
-        ).requires_grad_(False).eval().to(DEVICE)
+            torch_dtype=weight_dtype
+        ).requires_grad_(False).eval()
         
         image_encoder = CLIPVisionModelWithProjection.from_pretrained(
             HF_REPO_ID,
             subfolder="image_encoder",
-            torch_dtype=weight_dtype,
-        ).requires_grad_(False).eval().to(DEVICE)
+            torch_dtype=weight_dtype
+        ).requires_grad_(False).eval()
         
         unet_encoder = UNet2DConditionModel_ref.from_pretrained(
             HF_REPO_ID,
             subfolder="unet_encoder",
-            torch_dtype=weight_dtype,
-        ).requires_grad_(False).eval().to(DEVICE)
+            torch_dtype=weight_dtype
+        ).requires_grad_(False).eval()
         
         text_encoder_one = CLIPTextModel.from_pretrained(
             HF_REPO_ID,
             subfolder="text_encoder",
-            torch_dtype=weight_dtype,
-        ).requires_grad_(False).eval().to(DEVICE)
+            torch_dtype=weight_dtype
+        ).requires_grad_(False).eval()
         
         text_encoder_two = CLIPTextModelWithProjection.from_pretrained(
             HF_REPO_ID,
             subfolder="text_encoder_2",
-            torch_dtype=weight_dtype,
-        ).requires_grad_(False).eval().to(DEVICE)
+            torch_dtype=weight_dtype
+        ).requires_grad_(False).eval()
         
         tokenizer_one = AutoTokenizer.from_pretrained(
             HF_REPO_ID,
@@ -95,7 +93,7 @@ class PipelineLoader:
             scheduler=noise_scheduler,
             image_encoder=image_encoder,
             torch_dtype=weight_dtype,
-        ).to(DEVICE)
+        )
         pipe.unet_encoder = unet_encoder
         
         return (pipe, )
