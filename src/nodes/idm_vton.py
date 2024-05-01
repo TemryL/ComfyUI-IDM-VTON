@@ -39,7 +39,12 @@ class IDM_VTON:
     FUNCTION = "make_inference"
     CATEGORY = "ComfyUI-IDM-VTON"
     
-    def preprocess_images(self, model_img, garment_img, pose_img, mask_img, width, height):
+    def preprocess_images(self, model_img, garment_img, pose_img, mask_img, width, height):        
+        model_img = model_img.permute(0, 3, 1, 2)
+        garment_img = garment_img.permute(0, 3, 1, 2)
+        pose_img = pose_img.permute(0, 3, 1, 2)
+        mask_img = mask_img.permute(0, 3, 1, 2)
+        
         transform = transforms.Compose(
             [
                 transforms.Normalize([0.5], [0.5]),
@@ -50,22 +55,17 @@ class IDM_VTON:
         
         # model_img = model_img.resize((width, height))
         model_img = transform(model_img)
-        # model_img = (model_img.unsqueeze(0) + 1.0) / 2.0
         model_img = (model_img + 1.0) / 2.0
         model_img = model_img.to(DEVICE)
         
         garment_img = transform(garment_img)
-        # garment_img = garment_img.unsqueeze(0)
         garment_img = garment_img.to(DEVICE)
         
         pose_img = transform(pose_img)
-        # pose_img = pose_img.unsqueeze(0)
         pose_img = pose_img.to(DEVICE)
         
         # mask_img = mask_img.resize((width, height))
-        # mask_img = to_tensor(mask_img)
-        mask_img = mask_img[:1]
-        # mask_img = mask_img.unsqueeze(0)
+        mask_img = mask_img[:,:1,:,:]
         mask_img = mask_img.to(DEVICE)
         
         return model_img, garment_img, pose_img, mask_img, image_embeds
