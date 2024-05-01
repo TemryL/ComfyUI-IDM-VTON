@@ -99,9 +99,7 @@ class IDM_VTON:
                         do_classifier_free_guidance=False,
                         negative_prompt=garment_negative_prompt,
                     )
-                    
-                    print("{:.2f}".format(torch.cuda.memory_allocated(DEVICE)*1e-9))
-                    
+                                        
                     images = pipeline(
                         prompt_embeds=prompt_embeds,
                         negative_prompt_embeds=negative_prompt_embeds,
@@ -121,7 +119,7 @@ class IDM_VTON:
                         ip_adapter_image=image_embeds,
                     )[0]
                     
-                    print(type(images))
-                    print(type(images[0]))
+                    images = [transforms.ToTensor()(image) for image in images]
+                    images = [image.permute(1,2,0) for image in images]
                     
-                    return (images[0], )
+                    return (images, )
