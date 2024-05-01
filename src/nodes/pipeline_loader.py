@@ -9,8 +9,10 @@ from transformers import AutoTokenizer, CLIPImageProcessor, CLIPVisionModelWithP
 from ..idm_vton.unet_hacked_tryon import UNet2DConditionModel
 from ..idm_vton.unet_hacked_garmnet import UNet2DConditionModel as UNet2DConditionModel_ref
 from ..idm_vton.tryon_pipeline import StableDiffusionXLInpaintPipeline as TryonPipeline
+from comfy.model_management import get_torch_device
 
 
+DEVICE = get_torch_device()
 HF_REPO_ID = "yisol/IDM-VTON"   # should be downloaded from HF and stored in models folder instead of HF cache
 
 
@@ -35,37 +37,37 @@ class PipelineLoader:
             HF_REPO_ID,
             subfolder="vae",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval()
+        ).requires_grad_(False).eval().to(DEVICE)
         
         unet = UNet2DConditionModel.from_pretrained(
             HF_REPO_ID,
             subfolder="unet",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval()
+        ).requires_grad_(False).eval().to(DEVICE)
         
         image_encoder = CLIPVisionModelWithProjection.from_pretrained(
             HF_REPO_ID,
             subfolder="image_encoder",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval()
+        ).requires_grad_(False).eval().to(DEVICE)
         
         unet_encoder = UNet2DConditionModel_ref.from_pretrained(
             HF_REPO_ID,
             subfolder="unet_encoder",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval()
+        ).requires_grad_(False).eval().to(DEVICE)
         
         text_encoder_one = CLIPTextModel.from_pretrained(
             HF_REPO_ID,
             subfolder="text_encoder",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval()
+        ).requires_grad_(False).eval().to(DEVICE)
         
         text_encoder_two = CLIPTextModelWithProjection.from_pretrained(
             HF_REPO_ID,
             subfolder="text_encoder_2",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval()
+        ).requires_grad_(False).eval().to(DEVICE)
         
         tokenizer_one = AutoTokenizer.from_pretrained(
             HF_REPO_ID,
@@ -95,5 +97,8 @@ class PipelineLoader:
             torch_dtype=weight_dtype,
         )
         pipe.unet_encoder = unet_encoder
+        pipe = pipe.to(DEVICE)
+        
+        print("{:.2f}".format(torch.cuda.memory_allocated(DEVICE)*1e-9))
         
         return (pipe, )
