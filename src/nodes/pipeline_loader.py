@@ -98,7 +98,5 @@ class PipelineLoader:
         )
         pipe.unet_encoder = unet_encoder
         pipe = pipe.to(DEVICE)
-        
-        print("{:.2f}".format(torch.cuda.memory_allocated(DEVICE)*1e-9))
-        
+                
         return (pipe, )
