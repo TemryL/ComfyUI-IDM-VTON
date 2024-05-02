@@ -37,4 +37,4 @@ If you're ready to contribute, please create a fork, make your changes, commit t
 - [ComfyUI's ControlNet Auxiliary Preprocessors](https://github.com/Fannovel16/comfyui_controlnet_aux)
 
 # License
-Under [CC BY-NC-SA 4.0 license](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
+Original [IDM-VTON](https://github.com/yisol/IDM-VTON) source code under [CC BY-NC-SA 4.0 license](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
