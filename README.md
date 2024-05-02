@@ -19,6 +19,11 @@ git clone https://github.com/TemryL/ComfyUI-IDM-VTON.git
 pip install -r requirements.txt 
 ```
 
+# Mask Generation
+The workflow provided above uses segment anythin model (SAM) to generate the image mask. The ComfyUI nodes can be found here: [ComfyUI Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
+
+# DensePose Estimation
+
 # Contribute
 Thanks for your interest in contributing to the source code! We welcome help from anyone and appreciate every contribution, no matter how small!
 
