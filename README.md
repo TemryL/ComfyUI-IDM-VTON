@@ -7,9 +7,9 @@ ComfyUI adaptation of [IDM-VTON](https://github.com/yisol/IDM-VTON).
 
 :warning: Current implementation requires GPU with at least 16GB of VRAM :warning:
 
-### Using [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager):
+### Using ComfyUI Manager:
 
-- Look for ```ComfyUI-IDM-VTON```, and be sure the author is ```TemryL```. Install it.
+- In [ComfyUI Manager](https://github.com/ltdrdata/ComfyUI-Manager), look for ```ComfyUI-IDM-VTON```, and be sure the author is ```TemryL```. Install it.
 
 ### Manually:
 - Clone this repo into `custom_nodes` folder in ComfyUI and install the dependencies.
