@@ -1,7 +1,7 @@
 # ComfyUI-IDM-VTON
 ComfyUI adaptation of [IDM-VTON](https://github.com/yisol/IDM-VTON).
 
-![workflow](./assets/workflow.png)
+![workflow](workflow.png)
 
 # Installation
 
