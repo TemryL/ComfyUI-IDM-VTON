@@ -20,9 +20,10 @@ pip install -r requirements.txt
 ```
 
 # Mask Generation
-The workflow provided above uses segment anythin model (SAM) to generate the image mask. The ComfyUI nodes can be found here: [ComfyUI Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
+The workflow provided above uses [ComfyUI Segment Anything](https://github.com/storyicon/comfyui_segment_anything) to generate the image mask.
 
 # DensePose Estimation
+DensePose estimation is performed using [ComfyUI's ControlNet Auxiliary Preprocessors](https://github.com/Fannovel16/comfyui_controlnet_aux).
 
 # Contribute
 Thanks for your interest in contributing to the source code! We welcome help from anyone and appreciate every contribution, no matter how small!
@@ -33,6 +34,7 @@ If you're ready to contribute, please create a fork, make your changes, commit t
 - [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
 - [IDM-VTON](https://github.com/yisol/IDM-VTON)
 - [ComfyUI Segment Anything](https://github.com/storyicon/comfyui_segment_anything)
+- [ComfyUI's ControlNet Auxiliary Preprocessors](https://github.com/Fannovel16/comfyui_controlnet_aux)
 
 # License
 Under [CC BY-NC-SA 4.0 license](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
