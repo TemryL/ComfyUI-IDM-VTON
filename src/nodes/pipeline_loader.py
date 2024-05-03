@@ -27,7 +27,11 @@ class PipelineLoader:
     FUNCTION = "load_pipeline"
     
     def load_pipeline(self):
-        weight_dtype = torch.float16
+        if DEVICE == torch.device("cpu"):
+            weight_dtype = torch.float32
+        else:
+            weight_dtype = torch.float16
+        
         noise_scheduler = DDPMScheduler.from_pretrained(
             HF_REPO_ID, 
             subfolder="scheduler"
