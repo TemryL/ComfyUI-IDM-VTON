@@ -39,7 +39,7 @@ class IDM_VTON:
     FUNCTION = "make_inference"
     CATEGORY = "ComfyUI-IDM-VTON"
     
-    def preprocess_images(self, model_img, garment_img, pose_img, mask_img, width, height):        
+    def preprocess_images(self, model_img, garment_img, pose_img, mask_img, width, height, dtype):
         model_img = model_img.permute(0, 3, 1, 2)
         garment_img = garment_img.permute(0, 3, 1, 2)
         pose_img = pose_img.permute(0, 3, 1, 2)
@@ -53,25 +53,26 @@ class IDM_VTON:
         clip_processor = CLIPImageProcessor()
         image_embeds = clip_processor(images=garment_img, return_tensors="pt").pixel_values[0].unsqueeze(0)
         
+        # Transform images:
         # model_img = model_img.resize((width, height))
         model_img = transform(model_img)
         model_img = (model_img + 1.0) / 2.0
-        model_img = model_img.to(DEVICE)
-        
         garment_img = transform(garment_img)
-        garment_img = garment_img.to(DEVICE)
-        
         pose_img = transform(pose_img)
-        pose_img = pose_img.to(DEVICE)
-        
         # mask_img = mask_img.resize((width, height))
         mask_img = mask_img[:,:1,:,:]
-        mask_img = mask_img.to(DEVICE)
+        
+        # Move to device and cast to dtype:
+        image_embeds = image_embeds.to(DEVICE, dtype)
+        model_img = model_img.to(DEVICE, dtype)
+        garment_img = garment_img.to(DEVICE, dtype)
+        pose_img = pose_img.to(DEVICE, dtype)
+        mask_img = mask_img.to(DEVICE, dtype)
         
         return model_img, garment_img, pose_img, mask_img, image_embeds
     
     def make_inference(self, pipeline, model_img, garment_img, pose_img, mask_img, height, width, model_prompt, model_negative_prompt, garment_prompt, garment_negative_prompt, num_inference_steps, strength, guidance_scale, seed):
-        model_img, garment_img, pose_img, mask_img, image_embeds = self.preprocess_images(model_img, garment_img, pose_img, mask_img, width, height)
+        model_img, garment_img, pose_img, mask_img, image_embeds = self.preprocess_images(model_img, garment_img, pose_img, mask_img, width, height, dtype=pipeline.dtype)
         
         with torch.cuda.amp.autocast():
             with torch.no_grad():
@@ -99,7 +100,7 @@ class IDM_VTON:
                         do_classifier_free_guidance=False,
                         negative_prompt=garment_negative_prompt,
                     )
-                                        
+                    
                     images = pipeline(
                         prompt_embeds=prompt_embeds,
                         negative_prompt_embeds=negative_prompt_embeds,

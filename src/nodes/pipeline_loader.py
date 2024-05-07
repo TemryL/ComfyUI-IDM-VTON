@@ -19,18 +19,24 @@ HF_REPO_ID = "yisol/IDM-VTON"   # should be downloaded from HF and stored in mod
 class PipelineLoader:
     @classmethod
     def INPUT_TYPES(s):
-        return {"required": {}}
+        return {
+            "required": {
+                "weight_dtype": (("float32", "float16", "bfloat16"), ),
+            }
+        }
     
     CATEGORY = "ComfyUI-IDM-VTON"
     INPUT_NODE = True
     RETURN_TYPES = ("PIPELINE",)
     FUNCTION = "load_pipeline"
     
-    def load_pipeline(self):
-        if DEVICE == torch.device("cpu"):
+    def load_pipeline(self, weight_dtype):
+        if weight_dtype == "float32":
             weight_dtype = torch.float32
-        else:
+        elif weight_dtype == "float16":
             weight_dtype = torch.float16
+        elif weight_dtype == "bfloat16":
+            weight_dtype = torch.bfloat16
         
         noise_scheduler = DDPMScheduler.from_pretrained(
             HF_REPO_ID, 
@@ -102,5 +108,6 @@ class PipelineLoader:
         )
         pipe.unet_encoder = unet_encoder
         pipe = pipe.to(DEVICE)
-                
+        pipe.weight_dtype = weight_dtype
+        
         return (pipe, )
