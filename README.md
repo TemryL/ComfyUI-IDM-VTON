@@ -27,13 +27,13 @@ The workflow provided above uses [ComfyUI Segment Anything](https://github.com/s
 # DensePose Estimation
 DensePose estimation is performed using [ComfyUI's ControlNet Auxiliary Preprocessors](https://github.com/Fannovel16/comfyui_controlnet_aux).
 
+# :star: Star Us!
+If you find this project useful, please consider giving it a star on GitHub. This helps the project to gain visibility and encourages more contributors to join in. Thank you for your support!
+
 # Contribute
 Thanks for your interest in contributing to the source code! We welcome help from anyone and appreciate every contribution, no matter how small!
 
 If you're ready to contribute, please create a fork, make your changes, commit them, and then submit a pull request for review. We'll consider it for integration into the main code base.
-
-# :star: Star Us!
-If you find this project useful, please consider giving it a star on GitHub. This helps the project to gain visibility and encourages more contributors to join in. Thank you for your support!
 
 # Credits
 - [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
