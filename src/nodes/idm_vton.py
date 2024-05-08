@@ -4,12 +4,11 @@ sys.path.append('..')
 
 import torch
 from torchvision import transforms
-from transformers import CLIPImageProcessor
 from comfy.model_management import get_torch_device
 
 
 DEVICE = get_torch_device()
-MAX_RESOLUTION=16384
+MAX_RESOLUTION = 16384
 
 
 class IDM_VTON:
@@ -99,8 +98,8 @@ class IDM_VTON:
                         negative_prompt=negative_prompt,
                     )
 
-                    pose_img = tensor_transfrom(pose_img).unsqueeze(0).to(DEVICE, torch.float16)
-                    garment_tensor = tensor_transfrom(garment_img).unsqueeze(0).to(DEVICE, torch.float16)
+                    pose_img = tensor_transfrom(pose_img).unsqueeze(0).to(DEVICE, pipeline.dtype)
+                    garment_tensor = tensor_transfrom(garment_img).unsqueeze(0).to(DEVICE, pipeline.dtype)
                     
                     images = pipeline(
                         prompt_embeds=prompt_embeds,
