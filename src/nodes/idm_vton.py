@@ -21,10 +21,8 @@ class IDM_VTON:
                 "pose_img": ("IMAGE",),
                 "mask_img": ("IMAGE",),
                 "garment_img": ("IMAGE",),
-                "model_prompt": ("STRING", {"multiline": True, "dynamicPrompts": True}),
-                "model_negative_prompt": ("STRING", {"multiline": True, "dynamicPrompts": True}),
-                "garment_prompt": ("STRING", {"multiline": True, "dynamicPrompts": True}),
-                "garment_negative_prompt": ("STRING", {"multiline": True, "dynamicPrompts": True}),
+                "garment_description": ("STRING", {"multiline": True, "dynamicPrompts": True}),
+                "negative_prompt": ("STRING", {"multiline": True, "dynamicPrompts": True}),
                 "width": ("INT", {"default": 768, "min": 0, "max": MAX_RESOLUTION}),
                 "height": ("INT", {"default": 1024, "min": 0, "max": MAX_RESOLUTION}),
                 "num_inference_steps": ("INT", {"default": 30}),
@@ -53,12 +51,11 @@ class IDM_VTON:
         garment_img = garment_img.convert("RGB").resize((width, height))
         mask_img = mask_img.convert("RGB").resize((width, height))
         pose_img = pose_img.convert("RGB").resize((width, height))
-          
+        
         return human_img, garment_img, pose_img, mask_img
     
-    def make_inference(self, pipeline, human_img, garment_img, pose_img, mask_img, height, width, model_prompt, model_negative_prompt, garment_prompt, garment_negative_prompt, num_inference_steps, strength, guidance_scale, seed):
+    def make_inference(self, pipeline, human_img, garment_img, pose_img, mask_img, height, width, garment_description, negative_prompt, num_inference_steps, strength, guidance_scale, seed):
         human_img, garment_img, pose_img, mask_img = self.preprocess_images(human_img, garment_img, pose_img, mask_img, height, width)
-        garment_des = "a tee-shirt"
         tensor_transfrom = transforms.Compose(
             [
                 transforms.ToTensor(),
@@ -70,8 +67,7 @@ class IDM_VTON:
             # Extract the images
             with torch.cuda.amp.autocast():
                 with torch.inference_mode():
-                    prompt = "model is wearing " + garment_des
-                    negative_prompt = "monochrome, lowres, bad anatomy, worst quality, low quality"
+                    prompt = "model is wearing " + garment_description
                     (
                         prompt_embeds,
                         negative_prompt_embeds,
@@ -84,8 +80,8 @@ class IDM_VTON:
                         negative_prompt=negative_prompt,
                     )
                                     
-                    prompt = ["a photo of " + garment_des]
-                    negative_prompt = ["monochrome, lowres, bad anatomy, worst quality, low quality"]                
+                    prompt = ["a photo of " + garment_description]
+                    negative_prompt = [negative_prompt]
                     (
                         prompt_embeds_c,
                         _,
