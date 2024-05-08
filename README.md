@@ -32,6 +32,13 @@ Thanks for your interest in contributing to the source code! We welcome help fro
 
 If you're ready to contribute, please create a fork, make your changes, commit them, and then submit a pull request for review. We'll consider it for integration into the main code base.
 
+To encourage people to star your GitHub repository via your README, it's good to be clear, polite, and to explain the benefits of starring the project. Here’s a simple way you could ask for stars in your README:
+
+---
+
+# :star: Star Us!
+If you find this project useful, please consider giving it a star on GitHub. This helps the project to gain visibility and encourages more contributors to join in. Thank you for your support!
+
 # Credits
 - [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
 - [IDM-VTON](https://github.com/yisol/IDM-VTON)
