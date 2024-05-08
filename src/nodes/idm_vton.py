@@ -18,7 +18,7 @@ class IDM_VTON:
         return {
             "required": {
                 "pipeline": ("PIPELINE",),
-                "model_img": ("IMAGE",),
+                "human_img": ("IMAGE",),
                 "pose_img": ("IMAGE",),
                 "mask_img": ("IMAGE",),
                 "garment_img": ("IMAGE",),
@@ -39,67 +39,68 @@ class IDM_VTON:
     FUNCTION = "make_inference"
     CATEGORY = "ComfyUI-IDM-VTON"
     
-    def preprocess_images(self, model_img, garment_img, pose_img, mask_img, width, height, dtype):
-        model_img = model_img.permute(0, 3, 1, 2)
-        garment_img = garment_img.permute(0, 3, 1, 2)
-        pose_img = pose_img.permute(0, 3, 1, 2)
-        mask_img = mask_img.permute(0, 3, 1, 2)
+    def preprocess_images(self, human_img, garment_img, pose_img, mask_img, height, width):
+        human_img = human_img.squeeze().permute(2,0,1)
+        garment_img = garment_img.squeeze().permute(2,0,1)
+        pose_img = pose_img.squeeze().permute(2,0,1)
+        mask_img = mask_img.squeeze().permute(2,0,1)
         
-        transform = transforms.Compose(
+        human_img = transforms.functional.to_pil_image(human_img)  
+        garment_img = transforms.functional.to_pil_image(garment_img)  
+        pose_img = transforms.functional.to_pil_image(pose_img)  
+        mask_img = transforms.functional.to_pil_image(mask_img)
+        
+        human_img = human_img.convert("RGB").resize((width, height))
+        garment_img = garment_img.convert("RGB").resize((width, height))
+        mask_img = mask_img.convert("RGB").resize((width, height))
+        pose_img = pose_img.convert("RGB").resize((width, height))
+          
+        return human_img, garment_img, pose_img, mask_img
+    
+    def make_inference(self, pipeline, human_img, garment_img, pose_img, mask_img, height, width, model_prompt, model_negative_prompt, garment_prompt, garment_negative_prompt, num_inference_steps, strength, guidance_scale, seed):
+        human_img, garment_img, pose_img, mask_img = self.preprocess_images(human_img, garment_img, pose_img, mask_img, height, width)
+        garment_des = "a tee-shirt"
+        tensor_transfrom = transforms.Compose(
             [
+                transforms.ToTensor(),
                 transforms.Normalize([0.5], [0.5]),
             ]
         )
-        clip_processor = CLIPImageProcessor()
-        image_embeds = clip_processor(images=garment_img, return_tensors="pt").pixel_values[0].unsqueeze(0)
         
-        # Transform images:
-        # model_img = model_img.resize((width, height))
-        model_img = transform(model_img)
-        model_img = (model_img + 1.0) / 2.0
-        garment_img = transform(garment_img)
-        pose_img = transform(pose_img)
-        # mask_img = mask_img.resize((width, height))
-        mask_img = mask_img[:,:1,:,:]
-        
-        # Move to device and cast to dtype:
-        image_embeds = image_embeds.to(DEVICE, dtype)
-        model_img = model_img.to(DEVICE, dtype)
-        garment_img = garment_img.to(DEVICE, dtype)
-        pose_img = pose_img.to(DEVICE, dtype)
-        mask_img = mask_img.to(DEVICE, dtype)
-        
-        return model_img, garment_img, pose_img, mask_img, image_embeds
-    
-    def make_inference(self, pipeline, model_img, garment_img, pose_img, mask_img, height, width, model_prompt, model_negative_prompt, garment_prompt, garment_negative_prompt, num_inference_steps, strength, guidance_scale, seed):
-        model_img, garment_img, pose_img, mask_img, image_embeds = self.preprocess_images(model_img, garment_img, pose_img, mask_img, width, height, dtype=pipeline.dtype)
-        
-        with torch.cuda.amp.autocast():
-            with torch.no_grad():
+        with torch.no_grad():
+            # Extract the images
+            with torch.cuda.amp.autocast():
                 with torch.inference_mode():
+                    prompt = "model is wearing " + garment_des
+                    negative_prompt = "monochrome, lowres, bad anatomy, worst quality, low quality"
                     (
                         prompt_embeds,
                         negative_prompt_embeds,
                         pooled_prompt_embeds,
                         negative_pooled_prompt_embeds,
                     ) = pipeline.encode_prompt(
-                        model_prompt,
+                        prompt,
                         num_images_per_prompt=1,
                         do_classifier_free_guidance=True,
-                        negative_prompt=model_negative_prompt,
+                        negative_prompt=negative_prompt,
                     )
-                    
+                                    
+                    prompt = ["a photo of " + garment_des]
+                    negative_prompt = ["monochrome, lowres, bad anatomy, worst quality, low quality"]                
                     (
                         prompt_embeds_c,
                         _,
                         _,
                         _,
                     ) = pipeline.encode_prompt(
-                        garment_prompt,
+                        prompt,
                         num_images_per_prompt=1,
                         do_classifier_free_guidance=False,
-                        negative_prompt=garment_negative_prompt,
+                        negative_prompt=negative_prompt,
                     )
+
+                    pose_img = tensor_transfrom(pose_img).unsqueeze(0).to(DEVICE, torch.float16)
+                    garment_tensor = tensor_transfrom(garment_img).unsqueeze(0).to(DEVICE, torch.float16)
                     
                     images = pipeline(
                         prompt_embeds=prompt_embeds,
@@ -107,17 +108,17 @@ class IDM_VTON:
                         pooled_prompt_embeds=pooled_prompt_embeds,
                         negative_pooled_prompt_embeds=negative_pooled_prompt_embeds,
                         num_inference_steps=num_inference_steps,
-                        generator=torch.Generator(pipeline.device).manual_seed(seed),
+                        generator=torch.Generator(DEVICE).manual_seed(seed),
                         strength=strength,
                         pose_img=pose_img,
                         text_embeds_cloth=prompt_embeds_c,
-                        cloth=garment_img,
+                        cloth=garment_tensor,
                         mask_image=mask_img,
-                        image=model_img, 
+                        image=human_img, 
                         height=height,
                         width=width,
+                        ip_adapter_image=garment_img,
                         guidance_scale=guidance_scale,
-                        ip_adapter_image=image_embeds,
                     )[0]
                     
                     images = [transforms.ToTensor()(image) for image in images]
