@@ -37,7 +37,7 @@ from diffusers.models.embeddings import (
     ImageHintTimeEmbedding,
     ImageProjection,
     ImageTimeEmbedding,
-    PositionNet,
+    GLIGENTextBoundingboxProjection,
     TextImageProjection,
     TextImageTimeEmbedding,
     TextTimeEmbedding,
@@ -695,7 +695,7 @@ class UNet2DConditionModel(ModelMixin, ConfigMixin, UNet2DConditionLoadersMixin)
                 positive_len = cross_attention_dim[0]
 
             feature_type = "text-only" if attention_type == "gated" else "text-image"
-            self.position_net = PositionNet(
+            self.position_net = GLIGENTextBoundingboxProjection(
                 positive_len=positive_len, out_dim=cross_attention_dim, feature_type=feature_type
             )
 
