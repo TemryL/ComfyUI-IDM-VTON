@@ -18,6 +18,7 @@ ComfyUI adaptation of [IDM-VTON](https://github.com/yisol/IDM-VTON).
 ```bash
 cd custom_nodes
 git clone https://github.com/TemryL/ComfyUI-IDM-VTON.git
+cd ComfyUI-IDM-VTON
 pip install -r requirements.txt 
 ```
 
