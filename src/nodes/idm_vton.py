@@ -118,5 +118,5 @@ class IDM_VTON:
                     
                     images = [transforms.ToTensor()(image) for image in images]
                     images = [image.permute(1,2,0) for image in images]
-                    
+                    images = torch.stack(images)
                     return (images, )
