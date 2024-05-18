@@ -22,6 +22,49 @@ cd ComfyUI-IDM-VTON
 pip install -r requirements.txt 
 ```
 
+## Download weights:
+Download the models weights from [yisol/IDM-VTON](https://huggingface.co/yisol/IDM-VTON) in [HuggingFace](https://huggingface.co). The folder structure should be as follow:
+
+```
+models
+└── idm_vton
+    ├── image_encoder
+    │   ├── config.json
+    │   └── model.safetensors
+    ├── scheduler
+    │   └── scheduler_config.json
+    ├── text_encoder
+    │   ├── config.json
+    │   └── model.safetensors
+    ├── text_encoder_2
+    │   ├── config.json
+    │   └── model.safetensors
+    ├── tokenizer
+    │   ├── merges.txt
+    │   ├── special_tokens_map.json
+    │   ├── tokenizer_config.json
+    │   └── vocab.json
+    ├── tokenizer_2
+    │   ├── merges.txt
+    │   ├── special_tokens_map.json
+    │   ├── tokenizer_config.json
+    │   └── vocab.json
+    ├── unet
+    │   ├── config.json
+    │   └── diffusion_pytorch_model.bin
+    ├── unet_encoder
+    │   ├── config.json
+    │   └── diffusion_pytorch_model.safetensors
+    └── vae
+        ├── config.json
+        └── diffusion_pytorch_model.safetensors
+```
+You can place this folder wherever you want as long as you specify the correct path to `models/idm_vton` in the `Load IDM-VTON Pipeline` node. Config files are already provided in this repo. We also provide a shell script to download the weights from [HuggingFace](https://huggingface.co/yisol/IDM-VTON):
+```bash
+./scripts/download_weights.sh
+```
+
+
 # Mask Generation
 The workflow provided above uses [ComfyUI Segment Anything](https://github.com/storyicon/comfyui_segment_anything) to generate the image mask.
 
