@@ -1,6 +1,5 @@
-data/
-*.safetensors
-*.bin
+models/*
+!models/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
