@@ -10,6 +10,6 @@ Repository = "https://github.com/TemryL/ComfyUI-IDM-VTON"
 #  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "temryl"
 DisplayName = "ComfyUI-IDM-VTON"
 Icon = ""
