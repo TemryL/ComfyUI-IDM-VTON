@@ -22,6 +22,7 @@ class PipelineLoader:
         return {
             "required": {
                 "weight_dtype": (("float32", "float16", "bfloat16"), ),
+                "lowvram": ("BOOLEAN", {"default": True}),
             }
         }
     
@@ -30,14 +31,14 @@ class PipelineLoader:
     RETURN_TYPES = ("PIPELINE",)
     FUNCTION = "load_pipeline"
     
-    def load_pipeline(self, weight_dtype):
+    def load_pipeline(self, weight_dtype, lowvram):
         if weight_dtype == "float32":
             weight_dtype = torch.float32
         elif weight_dtype == "float16":
             weight_dtype = torch.float16
         elif weight_dtype == "bfloat16":
             weight_dtype = torch.bfloat16
-        
+            
         noise_scheduler = DDPMScheduler.from_pretrained(
             WEIGHTS_PATH, 
             subfolder="scheduler"
@@ -47,45 +48,38 @@ class PipelineLoader:
             WEIGHTS_PATH,
             subfolder="vae",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval().to(DEVICE)
-        
+        ).requires_grad_(False).eval()
         unet = UNet2DConditionModel.from_pretrained(
             WEIGHTS_PATH,
             subfolder="unet",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval().to(DEVICE)
-        
+        ).requires_grad_(False).eval()
         image_encoder = CLIPVisionModelWithProjection.from_pretrained(
             WEIGHTS_PATH,
             subfolder="image_encoder",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval().to(DEVICE)
-        
+        ).requires_grad_(False).eval()
         unet_encoder = UNet2DConditionModel_ref.from_pretrained(
             WEIGHTS_PATH,
             subfolder="unet_encoder",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval().to(DEVICE)
-        
+        ).requires_grad_(False).eval()
         text_encoder_one = CLIPTextModel.from_pretrained(
             WEIGHTS_PATH,
             subfolder="text_encoder",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval().to(DEVICE)
-        
+        ).requires_grad_(False).eval()
         text_encoder_two = CLIPTextModelWithProjection.from_pretrained(
             WEIGHTS_PATH,
             subfolder="text_encoder_2",
             torch_dtype=weight_dtype
-        ).requires_grad_(False).eval().to(DEVICE)
-        
+        ).requires_grad_(False).eval()
         tokenizer_one = AutoTokenizer.from_pretrained(
             WEIGHTS_PATH,
             subfolder="tokenizer",
             revision=None,
             use_fast=False,
         )
-        
         tokenizer_two = AutoTokenizer.from_pretrained(
             WEIGHTS_PATH,
             subfolder="tokenizer_2",
@@ -106,8 +100,14 @@ class PipelineLoader:
             image_encoder=image_encoder,
             torch_dtype=weight_dtype,
         )
-        pipe.unet_encoder = unet_encoder
-        pipe = pipe.to(DEVICE)
         pipe.weight_dtype = weight_dtype
-        
+        pipe.unet_encoder = unet_encoder
+        pipe.unet_encoder.to(DEVICE)
+
+        print("[VTON]:--->lowvram:",lowvram)
+        if lowvram == True:
+            pipe.enable_sequential_cpu_offload()
+        else:
+            pipe.to(DEVICE)
+        #
         return (pipe, )
