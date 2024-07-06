@@ -47,15 +47,29 @@ class IDM_VTON:
         pose_img = transforms.functional.to_pil_image(pose_img)  
         mask_img = transforms.functional.to_pil_image(mask_img)
         
-        human_img = human_img.convert("RGB").resize((width, height))
+        human_img_orig = human_img.convert("RGB")
+        width_orig, height_orig = human_img_orig.size
+        target_width = int(min(width_orig, height_orig * (3 / 4)))
+        target_height = int(min(height_orig, width_orig * (4 / 3)))
+        left = (width_orig - target_width) / 2
+        top = (height_orig - target_height) / 2
+        right = (width_orig + target_width) / 2
+        bottom = (height_orig + target_height) / 2
+        cropped_img = human_img_orig.crop((left, top, right, bottom))
+        crop_size = cropped_img.size
+        human_img = cropped_img.resize((width, height))
+        
         garment_img = garment_img.convert("RGB").resize((width, height))
+        
+        mask_img = mask_img.convert("RGB").crop((left, top, right, bottom))
         mask_img = mask_img.convert("RGB").resize((width, height))
+        
         pose_img = pose_img.convert("RGB").resize((width, height))
         
-        return human_img, garment_img, pose_img, mask_img
+        return human_img, garment_img, pose_img, mask_img, human_img_orig, crop_size, left, top
     
     def make_inference(self, pipeline, human_img, garment_img, pose_img, mask_img, height, width, garment_description, negative_prompt, num_inference_steps, strength, guidance_scale, seed):
-        human_img, garment_img, pose_img, mask_img = self.preprocess_images(human_img, garment_img, pose_img, mask_img, height, width)
+        human_img, garment_img, pose_img, mask_img, human_img_orig, crop_size, left, top = self.preprocess_images(human_img, garment_img, pose_img, mask_img, height, width)
         tensor_transfrom = transforms.Compose(
             [
                 transforms.ToTensor(),
@@ -115,6 +129,10 @@ class IDM_VTON:
                         ip_adapter_image=garment_img,
                         guidance_scale=guidance_scale,
                     )[0]
+                    
+                    out_img = images[0].resize(crop_size)        
+                    human_img_orig.paste(out_img, (int(left), int(top)))
+                    images = [human_img_orig]
                     
                     images = [transforms.ToTensor()(image) for image in images]
                     images = [image.permute(1,2,0) for image in images]
