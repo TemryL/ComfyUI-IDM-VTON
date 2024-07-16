@@ -55,7 +55,7 @@ from .unet_block_hacked_tryon import (
     get_up_block,
 )
 from diffusers.models.resnet import Downsample2D, FirDownsample2D, FirUpsample2D, KDownsample2D, KUpsample2D, ResnetBlock2D, Upsample2D
-from diffusers.models.transformer_2d import Transformer2DModel
+from diffusers.models.transformers.transformer_2d import Transformer2DModel
 import math
 
 from ..ip_adapter.ip_adapter import Resampler
