@@ -2,7 +2,7 @@
 name = "comfyui-idm-vton"
 description = "ComfyUI adaptation of [a/IDM-VTON](https://github.com/yisol/IDM-VTON) for virtual try-on."
 version = "1.0.0"
-license = "LICENSE"
+license = { file = "LICENSE" }
 dependencies = ["torch", "torchvision", "torchaudio", "accelerate==0.30.0", "torchmetrics==1.4.0", "tqdm==4.66.4", "transformers==4.40.2", "diffusers==0.27.2", "einops==0.8.0", "bitsandbytes==0.42", "scipy==1.13.0", "opencv-python"]
 
 [project.urls]
