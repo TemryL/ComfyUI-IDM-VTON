@@ -1,5 +1,5 @@
 import sys
-import os.path
+import os
 import subprocess
 from huggingface_hub import snapshot_download
 
@@ -9,6 +9,7 @@ CUSTOM_NODES_PATH = os.path.dirname(os.path.abspath(__file__))
 WEIGHTS_PATH = os.path.join(models_dir, "IDM-VTON")
 HF_REPO_ID = "yisol/IDM-VTON"
 
+os.makedirs(WEIGHTS_PATH, exist_ok=True)
 
 def build_pip_install_cmds(args):
     if "python_embeded" in sys.executable or "python_embedded" in sys.executable:
