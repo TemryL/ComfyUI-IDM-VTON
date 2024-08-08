@@ -3,9 +3,10 @@ import os.path
 import subprocess
 from huggingface_hub import snapshot_download
 
+from folder_paths import models_dir
 
 CUSTOM_NODES_PATH = os.path.dirname(os.path.abspath(__file__))
-WEIGHTS_PATH = os.path.join(CUSTOM_NODES_PATH, "models")
+WEIGHTS_PATH = os.path.join(models_dir, "IDM-VTON")
 HF_REPO_ID = "yisol/IDM-VTON"
 
 
