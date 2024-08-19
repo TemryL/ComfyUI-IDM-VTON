@@ -3,6 +3,7 @@ import os
 import subprocess
 from huggingface_hub import snapshot_download
 
+sys.path.append("../../")
 from folder_paths import models_dir
 
 CUSTOM_NODES_PATH = os.path.dirname(os.path.abspath(__file__))
