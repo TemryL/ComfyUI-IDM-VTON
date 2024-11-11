@@ -52,6 +52,7 @@ class PipelineLoader:
         unet = UNet2DConditionModel.from_pretrained(
             WEIGHTS_PATH,
             subfolder="unet",
+            safety_checker=None,
             torch_dtype=weight_dtype
         ).requires_grad_(False).eval().to(DEVICE)
         
